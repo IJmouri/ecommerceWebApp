@@ -14,6 +14,10 @@
   <link rel="stylesheet" href="{{ asset('backend')}}/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="{{ asset('backend')}}/dist/css/adminlte.min.css">
+  <!-- alert -->
+  <link rel="stylesheet" href="{{ asset('backend')}}/plugins/sweetalert2/sweetalert2.css">
+  <link rel="stylesheet" href="{{ asset('backend')}}/plugins/toastr/toastr.css">
+  
 </head>
 <!-- <body class="hold-transition dark-mode sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed"> -->
 
@@ -73,9 +77,53 @@
   <script src="{{ asset('backend')}}/plugins/chart.js/Chart.min.js"></script>
 
   <!-- AdminLTE for demo purposes -->
-  <script src="{{ asset('backend')}}/dist/js/demo.js"></script>
+  <!-- <script src="{{ asset('backend')}}/dist/js/demo.js"></script> -->
   <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
   <script src="{{asset('/backend/dist/js/pages/dashboard2.js')}}"></script>
+  <script src="{{asset('/backend/plugins/sweetalert2/sweetalert2.min.js')}}"></script>
+  <script src="{{asset('/backend/plugins/toastr/toastr.min.js')}}"></script>
+  
+  <script>
+    $(document).on("click","#adminlogout",function(e){
+      e.preventDefault();
+      var link = $(this).attr("href");
+        Swal.fire({
+          title: 'Do you want to logout?',
+          text: '',
+          icon: 'success',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes'
+        })
+        .then((result) => {
+          if(result.isConfirmed){
+            window.location.href = link;
+          }else{
+            Swal.fire("Not logout");
+          }
+        });
+    });
+  </script>
+  <script>
+    @if(Session::has('message'))
+      var type="{{ Session::get('alert-type','info')}}"
+      switch(type){
+        case 'info':
+          toastr.info("{{ Session::get('message')}}");
+          break;
+        case 'success':
+          toastr.success("{{ Session::get('message')}}");
+          break;
+        case 'warning':
+          toastr.warning("{{ Session::get('message')}}");
+          break;
+        case 'error':
+          toastr.error("{{ Session::get('message')}}");
+          break;
+      }
+    @endif
+  </script>
 </body>
 
 </html>
