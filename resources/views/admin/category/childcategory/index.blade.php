@@ -29,7 +29,7 @@
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
-                            <table id="ytable" class="table table-bordered table-striped ytable">
+                            <table id="ytable" class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
                                         <th>SL</th>
@@ -63,24 +63,32 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{{ route('subcategory.store') }}" method="post">
+            <form action="{{ route('childcategory.store') }}" method="post" id="childcategoryAddForm">
                 @csrf
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="category_name">Category Name</label>
-                        <select class="form-control" name="category_id" required>
-                           
+                        <label for="category_name">Category/Subcategory Name</label>
+                        <select class="form-control" name="subcategory_id" required>
+                           @foreach($category as $row)
+                                @php
+                                    $subcat = DB::table('subcategories')->where('category_id',$row->id)->get();
+                                @endphp
+                                <option value="{{ $row->id }}">{{ $row->category_name }}</option>
+                                @foreach($subcat as $sub)
+                                    <option value="{{ $sub->id }}">---- {{ $sub->subcategory_name }}</option>
+                                @endforeach
+                           @endforeach
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="subcategory_name">Sub-category Name</label>
-                        <input type="text" class="form-control" id="subcategory_name" name="subcategory_name" required>
-                        <small class="form-text text-muted">This is sub category</small>
+                        <label for="subcategory_name">Child Category Name</label>
+                        <input type="text" class="form-control" id="childcategory_name" name="childcategory_name" required>
+                        <small class="form-text text-muted">This is child category</small>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="submit" class="btn btn-primary"><span class="d-none">loading...</span>Submit</button>
 
                 </div>
             </form>
@@ -119,6 +127,13 @@
                 {data: 'action', name:'action', orderable : true, searchable : true},
             ]
        });
+    });
+
+    $('body').on('click','.edit',function(){
+        let childcategoryId = $(this).data('id');
+        $.get("childcategory/edit/"+childcategoryId, function(data){
+            $('#modal_body').html(data);
+        });
     });
 </script>
 @endsection
